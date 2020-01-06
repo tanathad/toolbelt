@@ -1,5 +1,5 @@
 const Nock = require('@fancy-test/nock').default;
-const { expect, test } = require('@oclif/test');
+const { test } = require('@oclif/test');
 
 const fancy = test.register('nock', Nock);
 const ProjectSerializer = require('../../../src/serializers/project');
@@ -7,11 +7,16 @@ const authenticator = require('../../../src/services/authenticator');
 
 describe('projects', () => {
   let getAuthToken;
-  before(() => {
+  let logs;
+
+  console.log = (log) => { logs += log; };
+
+  beforeEach(() => {
+    logs = '';
     getAuthToken = authenticator.getAuthToken;
     authenticator.getAuthToken = () => 'token';
   });
-  after(() => { authenticator.getAuthToken = getAuthToken; });
+  afterEach(() => { authenticator.getAuthToken = getAuthToken; });
 
   const mocks = fancy
     .stdout()
@@ -44,43 +49,48 @@ describe('projects', () => {
         },
       }])));
 
-  mocks
-    .command(['projects'])
-    .it('should return the list of projects', (ctx) => {
-      expect(ctx.stdout).to.contain('PROJECTS');
+  describe('without json option', () => {
+    mocks
+      .command(['projects'])
+      .it('should return the list of projects', () => {
+        expect(logs).toContain('PROJECTS');
 
-      expect(ctx.stdout).to.contain('ID');
-      expect(ctx.stdout).to.contain('21');
-      expect(ctx.stdout).to.contain('NAME');
-      expect(ctx.stdout).to.contain('Illustrio');
+        expect(logs).toContain('ID');
+        expect(logs).toContain('21');
+        expect(logs).toContain('NAME');
+        expect(logs).toContain('Illustrio');
 
-      expect(ctx.stdout).to.contain('ID');
-      expect(ctx.stdout).to.contain('82');
-      expect(ctx.stdout).to.contain('NAME');
-      expect(ctx.stdout).to.contain('Forest');
-    });
+        expect(logs).toContain('ID');
+        expect(logs).toContain('82');
+        expect(logs).toContain('NAME');
+        expect(logs).toContain('Forest');
+      });
+  });
 
-  mocks
-    .command(['projects', '--format', 'json'])
-    .it('should return the list of projects', (ctx) => {
-      expect(JSON.parse(ctx.stdout)).to.eql([{
-        id: '82',
-        name: 'Forest',
-        defaultEnvironment: {
-          id: '2200',
-          name: 'Production',
-          apiEndpoint: 'https://api.forestadmin.com',
-          type: 'production',
-        },
-      }, {
-        id: '21',
-        name: 'Illustrio',
-        defaultEnvironment: {
-          id: '39',
-          name: 'Production',
-          apiEndpoint: 'http://dev.illustrio.com:5001',
-          type: 'development',
-        },
-      }]);
-    });
+
+  describe('with json option', () => {
+    mocks
+      .command(['projects', '--format', 'json'])
+      .it('should return the list of projects', () => {
+        expect(JSON.parse(logs)).toStrictEqual([{
+          id: '82',
+          name: 'Forest',
+          defaultEnvironment: {
+            id: '2200',
+            name: 'Production',
+            apiEndpoint: 'https://api.forestadmin.com',
+            type: 'production',
+          },
+        }, {
+          id: '21',
+          name: 'Illustrio',
+          defaultEnvironment: {
+            id: '39',
+            name: 'Production',
+            apiEndpoint: 'http://dev.illustrio.com:5001',
+            type: 'development',
+          },
+        }]);
+      });
+  });
 });

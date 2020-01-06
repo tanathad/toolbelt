@@ -19,6 +19,8 @@ module.exports = {
         ]
       },
     ],
+    'jest/no-hooks': 0,
+    'jest/no-standalone-expect': 0,
     'no-console': 0,
     'no-param-reassign': 0,
   },
