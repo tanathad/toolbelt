@@ -11,7 +11,10 @@ describe('environments:get', () => {
     getAuthToken = authenticator.getAuthToken;
     authenticator.getAuthToken = () => 'token';
   });
-  afterEach(() => { authenticator.getAuthToken = getAuthToken; });
+
+  function cleanTest() {
+    authenticator.getAuthToken = getAuthToken;
+  }
 
   const mocks = fancy
     .stdout()
@@ -53,7 +56,8 @@ describe('environments:get', () => {
           expect(ctx.stdout).to.contain('FOREST_ENV_SECRET');
           expect(ctx.stdout).to.contain('2c38a1c6bb28e7bea1c943fac1c1c95db5dc1b7bc73bd649a0b113713ee29125');
         });
-  });
+      cleanTest();
+    });
 
   describe('with JSON format option', () => {
     mocks
@@ -69,7 +73,8 @@ describe('environments:get', () => {
           secretKey: '2c38a1c6bb28e7bea1c943fac1c1c95db5dc1b7bc73bd649a0b113713ee29125',
           id: '324',
         });
-      });
+      cleanTest();
+    });
   });
 
 
@@ -85,5 +90,6 @@ describe('environments:get', () => {
       .it('should display a NotFound error', (context) => {
         expect(context.stderr).toContain('Cannot find the environment 3947.\n');
       });
+    cleanTest();
   });
 });

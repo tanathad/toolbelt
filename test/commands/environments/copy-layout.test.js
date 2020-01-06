@@ -8,14 +8,19 @@ const authenticator = require('../../../src/services/authenticator');
 
 describe('environments:copy-layout', () => {
   let getAuthToken;
-  beforeEach(() => {
+
+  function initTest() {
     getAuthToken = authenticator.getAuthToken;
     authenticator.getAuthToken = () => 'token';
-  });
-  afterEach(() => { authenticator.getAuthToken = getAuthToken; });
+  }
+
+  function cleanTest() {
+    authenticator.getAuthToken = getAuthToken;
+  }
 
   describe('on an existing destination environment', () => {
     describe('on a completed job', () => {
+      initTest();
       let parsedBody;
 
       fancy
@@ -80,10 +85,12 @@ describe('environments:copy-layout', () => {
             type: 'deployment-requests',
           },
         });
+        cleanTest();
       });
     });
 
     describe('on a failed job', () => {
+      initTest();
       fancy
         .stdout()
         .stderr()
@@ -128,10 +135,12 @@ describe('environments:copy-layout', () => {
         .command(['environments:copy-layout', '325', '324', '-p', '82', '--force'])
         .exit(1)
         .it('should exit with status 1');
+      cleanTest();
     });
   });
 
   describe('on an unexisting destination environment', () => {
+    initTest();
     fancy
       .stdout()
       .stderr()
@@ -154,5 +163,6 @@ describe('environments:copy-layout', () => {
       .command(['environments:copy-layout', '325', '324', '-p', '82', '--force'])
       .exit(3)
       .it('should exit with status 3');
+    cleanTest();
   });
 });

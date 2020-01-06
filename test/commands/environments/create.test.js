@@ -16,9 +16,10 @@ describe('environments:create', () => {
     getAuthToken = authenticator.getAuthToken;
     authenticator.getAuthToken = () => 'token';
   });
-  afterEach(() => {
+
+  function cleanTest() {
     authenticator.getAuthToken = getAuthToken;
-  });
+  }
 
   const mocks = fancy
     .stdout()
@@ -48,6 +49,7 @@ describe('environments:create', () => {
         expect(logs).toContain('FOREST_ENV_SECRET');
         expect(logs).toContain('2c38a1c6bb28e7bea1c943fac1c1c95db5dc1b7bc73bd649a0b113713ee29125');
       });
+    cleanTest();
   });
 
   describe('with JSON format option', () => {
@@ -61,5 +63,6 @@ describe('environments:create', () => {
           secretKey: '2c38a1c6bb28e7bea1c943fac1c1c95db5dc1b7bc73bd649a0b113713ee29125',
         });
       });
+    cleanTest();
   });
 });

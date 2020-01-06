@@ -12,7 +12,10 @@ describe('environments:delete', () => {
     getAuthToken = authenticator.getAuthToken;
     authenticator.getAuthToken = () => 'token';
   });
-  afterEach(() => { authenticator.getAuthToken = getAuthToken; });
+
+  function cleanTest() {
+    authenticator.getAuthToken = getAuthToken;
+  }
 
   describe('on an existing environment', () => {
     describe('on a completed job', () => {
@@ -51,6 +54,7 @@ describe('environments:delete', () => {
         .it('should delete the environment', (context) => {
           expect(context.stdout).to.contain('Environment Staging successfully deleted.');
         });
+      cleanTest();
     });
 
     describe('on a failed job', () => {
@@ -87,6 +91,7 @@ describe('environments:delete', () => {
         .command(['environments:delete', '324', '--force'])
         .exit(1)
         .it('should exit with status 1');
+      cleanTest();
     });
   });
 
@@ -101,5 +106,6 @@ describe('environments:delete', () => {
       .command(['environments:delete', '324', '--force'])
       .exit(1)
       .it('should exit with status 1');
+    cleanTest();
   });
 });

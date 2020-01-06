@@ -16,7 +16,10 @@ describe('environments', () => {
     getAuthToken = authenticator.getAuthToken;
     authenticator.getAuthToken = () => 'token';
   });
-  afterEach(() => { authenticator.getAuthToken = getAuthToken; });
+
+  function cleanTest() {
+    authenticator.getAuthToken = getAuthToken;
+  }
 
   const mocks = fancy
     .stdout()
@@ -67,6 +70,7 @@ describe('environments', () => {
         expect(logs).toContain('TYPE');
         expect(logs).toContain('production');
       });
+    cleanTest();
   });
 
   describe('with JSON format option', () => {
@@ -96,5 +100,6 @@ describe('environments', () => {
           },
         ]);
       });
+    cleanTest();
   });
 });

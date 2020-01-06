@@ -7,7 +7,7 @@ const fancy = test.register('nock', Nock);
 describe('schema:apply', () => {
   let parsedBody;
 
-  beforeEach(() => {
+  function initTest() {
     const forestadminSchema = `{
       "meta": {
         "liana": "forest-express-sequelize",
@@ -43,9 +43,10 @@ describe('schema:apply', () => {
 
     process.chdir('/tmp');
     fs.writeFileSync('./.forestadmin-schema.json', forestadminSchema);
-  });
+  }
 
   describe('with no environment secret', () => {
+    initTest();
     fancy
       .stderr()
       .stdout()
@@ -57,6 +58,7 @@ describe('schema:apply', () => {
 
   describe('with an environment secret set in "FOREST_ENV_SECRET" environment variable', () => {
     describe('with forest server returning 404', () => {
+      initTest();
       fancy
         .stderr()
         .stdout()
@@ -69,6 +71,7 @@ describe('schema:apply', () => {
     });
 
     describe('with forest server returning 503', () => {
+      initTest();
       fancy
         .stderr()
         .stdout()
@@ -82,6 +85,7 @@ describe('schema:apply', () => {
 
     describe('with forest server returning 200', () => {
       describe('with a schema with camelcased keys', () => {
+        initTest();
         fancy
           .stderr()
           .stdout()
@@ -116,6 +120,7 @@ describe('schema:apply', () => {
       });
 
       describe('with a schema with snakecased keys', () => {
+        initTest();
         process.chdir('/tmp');
         fs.writeFileSync('./.forestadmin-schema.json', `{
           "meta": {
@@ -186,6 +191,7 @@ describe('schema:apply', () => {
   });
 
   describe('with forest server returning nothing', () => {
+    initTest();
     fancy
       .stderr()
       .stdout()

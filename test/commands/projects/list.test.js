@@ -16,7 +16,10 @@ describe('projects', () => {
     getAuthToken = authenticator.getAuthToken;
     authenticator.getAuthToken = () => 'token';
   });
-  afterEach(() => { authenticator.getAuthToken = getAuthToken; });
+
+  function cleanTest() {
+    authenticator.getAuthToken = getAuthToken;
+  }
 
   const mocks = fancy
     .stdout()
@@ -65,6 +68,7 @@ describe('projects', () => {
         expect(logs).toContain('NAME');
         expect(logs).toContain('Forest');
       });
+    cleanTest();
   });
 
 
@@ -92,5 +96,6 @@ describe('projects', () => {
           },
         }]);
       });
+    cleanTest();
   });
 });
