@@ -1,11 +1,5 @@
 const Nock = require('@fancy-test/nock').default;
 const { test } = require('@oclif/test');
-const _ = require('lodash');
-const chai = require('chai');
-const chaiSubset = require('chai-subset');
-
-const { expect } = chai;
-chai.use(chaiSubset);
 
 const fancy = test.register('nock', Nock);
 const EnvironmentSerializer = require('../../../src/serializers/environment');
@@ -14,11 +8,11 @@ const authenticator = require('../../../src/services/authenticator');
 
 describe('environments:copy-layout', () => {
   let getAuthToken;
-  before(() => {
+  beforeEach(() => {
     getAuthToken = authenticator.getAuthToken;
     authenticator.getAuthToken = () => 'token';
   });
-  after(() => { authenticator.getAuthToken = getAuthToken; });
+  afterEach(() => { authenticator.getAuthToken = getAuthToken; });
 
   describe('on an existing destination environment', () => {
     describe('on a completed job', () => {
@@ -69,14 +63,15 @@ describe('environments:copy-layout', () => {
             progress: '100',
           })))
         .command(['environments:copy-layout', '325', '324', '-p', '82', '--force'])
-        .it('should copy the layout', (ctx) => {
-          expect(ctx.stdout).to.contain('Environment\'s layout Production successfully copied to Staging.');
+        .it('should copy the layout', (context) => {
+          expect(context.stdout).toContain('Environment\'s layout Production successfully copied to Staging.');
         });
 
       it('should send the correct body', () => {
-        expect(parsedBody).to.containSubset({
+        expect.assertions(1);
+        expect(parsedBody).toStrictEqual({
           data: {
-            id: _.isString,
+            id: expect.any(String),
             attributes: {
               type: 'environment',
               from: '325',

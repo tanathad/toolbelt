@@ -1,5 +1,5 @@
 const Nock = require('@fancy-test/nock').default;
-const { expect, test } = require('@oclif/test');
+const { test } = require('@oclif/test');
 const fs = require('fs');
 
 const fancy = test.register('nock', Nock);
@@ -7,7 +7,7 @@ const fancy = test.register('nock', Nock);
 describe('schema:apply', () => {
   let parsedBody;
 
-  before(() => {
+  beforeEach(() => {
     const forestadminSchema = `{
       "meta": {
         "liana": "forest-express-sequelize",
@@ -61,9 +61,8 @@ describe('schema:apply', () => {
         .stderr()
         .stdout()
         .env({ FOREST_URL: 'http://localhost:3001', FOREST_ENV_SECRET: 'forestEnvSecret' })
-        .nock('http://localhost:3001', (api) => {
-          return api.post('/forest/apimaps').reply(404);
-        })
+        .nock('http://localhost:3001', (api) =>
+          api.post('/forest/apimaps').reply(404))
         .command(['schema:apply'])
         .exit(4)
         .it('should exit with exit code 4');
@@ -74,9 +73,8 @@ describe('schema:apply', () => {
         .stderr()
         .stdout()
         .env({ FOREST_URL: 'http://localhost:3001', FOREST_ENV_SECRET: 'forestEnvSecret' })
-        .nock('http://localhost:3001', (api) => {
-          return api.post('/forest/apimaps').reply(503);
-        })
+        .nock('http://localhost:3001', (api) =>
+          api.post('/forest/apimaps').reply(503))
         .command(['schema:apply'])
         .exit(5)
         .it('should exit with exit code 5');
@@ -88,15 +86,14 @@ describe('schema:apply', () => {
           .stderr()
           .stdout()
           .env({ FOREST_URL: 'http://localhost:3001', FOREST_ENV_SECRET: 'forestEnvSecret' })
-          .nock('http://localhost:3001', (api) => {
-            return api.post('/forest/apimaps', (body) => {
+          .nock('http://localhost:3001', (api) =>
+            api.post('/forest/apimaps', (body) => {
               parsedBody = body;
               return true;
-            }).reply(200);
-          })
+            }).reply(200))
           .command(['schema:apply'])
           .it('should send the schema', () => {
-            expect(parsedBody).to.containSubset({
+            expect(parsedBody).toStrictEqual({
               meta: {
                 liana: 'forest-express-sequelize',
                 orm_version: '3.24.8',
@@ -110,6 +107,7 @@ describe('schema:apply', () => {
                   attributes: {
                     isSearchable: true,
                     name: 'Users',
+                    fields: expect.any(Array),
                   },
                 },
               ],
@@ -156,15 +154,14 @@ describe('schema:apply', () => {
           .stderr()
           .stdout()
           .env({ FOREST_URL: 'http://localhost:3001', FOREST_ENV_SECRET: 'forestEnvSecret' })
-          .nock('http://localhost:3001', (api) => {
-            return api.post('/forest/apimaps', (body) => {
+          .nock('http://localhost:3001', (api) =>
+            api.post('/forest/apimaps', (body) => {
               parsedBody = body;
               return true;
-            }).reply(200);
-          })
+            }).reply(200))
           .command(['schema:apply'])
           .it('should send the schema', () => {
-            expect(parsedBody).to.containSubset({
+            expect(parsedBody).toStrictEqual({
               meta: {
                 liana: 'forest-express-sequelize',
                 orm_version: '3.24.8',
@@ -178,6 +175,7 @@ describe('schema:apply', () => {
                   attributes: {
                     isSearchable: true,
                     name: 'Users',
+                    fields: expect.any(Array),
                   },
                 },
               ],
@@ -192,9 +190,8 @@ describe('schema:apply', () => {
       .stderr()
       .stdout()
       .env({ FOREST_URL: 'http://localhost:3001', FOREST_ENV_SECRET: 'forestEnvSecret' })
-      .nock('http://localhost:3001', (api) => {
-        return api.post('/forest/apimaps').reply(500);
-      })
+      .nock('http://localhost:3001', (api) =>
+        api.post('/forest/apimaps').reply(500))
       .command(['schema:apply'])
       .exit(6)
       .it('should exit with exit code 6');

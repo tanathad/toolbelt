@@ -8,11 +8,11 @@ const authenticator = require('../../../src/services/authenticator');
 
 describe('environments:delete', () => {
   let getAuthToken;
-  before(() => {
+  beforeEach(() => {
     getAuthToken = authenticator.getAuthToken;
     authenticator.getAuthToken = () => 'token';
   });
-  after(() => { authenticator.getAuthToken = getAuthToken; });
+  afterEach(() => { authenticator.getAuthToken = getAuthToken; });
 
   describe('on an existing environment', () => {
     describe('on a completed job', () => {
@@ -48,8 +48,8 @@ describe('environments:delete', () => {
             progress: '100',
           })))
         .command(['environments:delete', '324', '--force'])
-        .it('should delete the environment', (ctx) => {
-          expect(ctx.stdout).to.contain('Environment Staging successfully deleted.');
+        .it('should delete the environment', (context) => {
+          expect(context.stdout).to.contain('Environment Staging successfully deleted.');
         });
     });
 

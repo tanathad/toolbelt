@@ -1,8 +1,12 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Readme - Add the test coverage badge.
+
 ### Changed
 - Technical - Untrack IDE `.idea` folder.
+- Technical - Use Jest instead of Mocha for the test base.
 
 ## RELEASE 1.1.0 - 2020-03-20
 ### Added
