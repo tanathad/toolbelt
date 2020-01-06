@@ -16,7 +16,7 @@ describe('environments:create', () => {
     getAuthToken = authenticator.getAuthToken;
     authenticator.getAuthToken = () => 'token';
   });
-  afterAll(() => {
+  afterEach(() => {
     authenticator.getAuthToken = getAuthToken;
   });
 
