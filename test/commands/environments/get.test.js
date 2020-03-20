@@ -1,7 +1,7 @@
 const testCli = require('./../test-cli');
 const {
-  getEnvironmentNock,
-  getEnvironmentNotFoundNock,
+  anEnvironmentValid,
+  anEnvironmentNotFound,
 } = require('../../fixtures/nocks');
 const { testEnv } = require('../../fixtures/envs');
 const GetCommand = require('../../../src/commands/environments/get');
@@ -12,11 +12,11 @@ describe('environments:get', () => {
       it('should display the configuration of the Staging environment', testCli({
         env: testEnv,
         token: 'any',
-        nock: [
-          getEnvironmentNock(),
-        ],
         command: () => GetCommand.run(['324']),
-        dialog: [
+        api: [
+          anEnvironmentValid(),
+        ],
+        std: [
           { out: 'id                 324' },
           { out: 'name               Staging' },
           { out: 'url                https://forestadmin-server-staging.herokuapp.com' },
@@ -32,11 +32,11 @@ describe('environments:get', () => {
       it('should display the configuration of the Staging environment', testCli({
         env: testEnv,
         token: 'any',
-        nock: [
-          getEnvironmentNock(),
-        ],
         command: () => GetCommand.run(['324', '--format', 'json']),
-        dialog: [
+        api: [
+          anEnvironmentValid(),
+        ],
+        std: [
           {
             out: {
               name: 'Staging',
@@ -58,11 +58,11 @@ describe('environments:get', () => {
     it('should display a NotFound error', testCli({
       env: testEnv,
       token: 'any',
-      nock: [
-        getEnvironmentNotFoundNock(),
-      ],
       command: () => GetCommand.run(['3947']),
-      dialog: [
+      api: [
+        anEnvironmentNotFound(),
+      ],
+      std: [
         { err: 'Cannot find the environment 3947.\n' },
       ],
     }));

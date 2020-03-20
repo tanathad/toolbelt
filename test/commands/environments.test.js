@@ -6,23 +6,23 @@ const {
 } = require('../fixtures/dialogs');
 const { testEnv } = require('../fixtures/envs');
 const {
-  notAGoogleAccountNock,
-  validAuthNock,
-  projectListNock,
-  environmentListNock,
+  notAGoogleAccount,
+  aLogInValid,
+  aProjectListValid,
+  anEnvironmentListValid,
 } = require('../fixtures/nocks');
 
 describe('environments', () => {
   it('should display environment list', testCli({
     env: testEnv,
     command: () => EnvironmentCommand.run([]),
-    nock: [
-      notAGoogleAccountNock(),
-      validAuthNock(),
-      projectListNock(),
-      environmentListNock(),
+    api: [
+      notAGoogleAccount(),
+      aLogInValid(),
+      aProjectListValid(),
+      anEnvironmentListValid(),
     ],
-    dialog: [
+    std: [
       { out: 'Login required.' },
       { out: 'What is your email address?' },
       { in: 'some@mail.com' },
