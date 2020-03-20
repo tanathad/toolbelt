@@ -1,6 +1,6 @@
 const mockStdin = require('mock-stdin');
 const { stdout, stderr } = require('stdout-stderr');
-const logger = require('./../../src/services/logger');
+const authenticator = require('./../../src/services/authenticator');
 
 const asArray = (any) => {
   if (!any) return [];
@@ -15,17 +15,34 @@ const errorIfRestNotEmpty = (rest) => {
 
 const errorIfDialogRestNotEmpty = (dialog) => {
   const valids = ['in', 'out', 'err'];
-  const rest = dialog.filter((type) => !valids.find(valid => type.hasOwnProperty(valid)));
+  const rest = dialog.filter((type) =>
+    !valids.find((valid) =>
+      Object.prototype.hasOwnProperty.call(type, valid)));
   if (rest.length > 0) {
     throw new Error(`Unknown testCli dialog attribute(s). Valids are: ${valids.join(', ')}`);
   }
 };
 
+const mockToken = (behavior) => {
+  if (behavior !== null) {
+    authenticator.getAuthTokenBack = authenticator.getAuthToken;
+    authenticator.getAuthToken = () => behavior;
+  }
+};
+
+const unmockToken = (behavior) => {
+  if (behavior !== null) {
+    authenticator.getAuthToken = authenticator.getAuthTokenBack;
+    authenticator.getAuthTokenBack = null;
+  }
+};
+
 module.exports = async function testCli({
-                                          nock, env, command, dialog, print = false, ...rest
-                                        }) {
+  nock, env, command, dialog, print = false, token: tokenBehavior = null, ...rest
+}) {
   errorIfRestNotEmpty(rest);
   errorIfDialogRestNotEmpty(dialog);
+  mockToken(tokenBehavior);
   stdout.print = print;
   stderr.print = print;
   const nocks = asArray(nock);
@@ -57,7 +74,7 @@ module.exports = async function testCli({
     } else {
       const isJson = outputs[i].constructor === ({}).constructor;
       if (isJson) {
-        expect(JSON.parse(stdout.output)).toEqual(outputs[i]);
+        expect(JSON.parse(stdout.output)).toStrictEqual(outputs[i]);
       }
     }
   }
@@ -67,4 +84,5 @@ module.exports = async function testCli({
   }
 
   process.env = previousEnv;
+  unmockToken(tokenBehavior);
 };

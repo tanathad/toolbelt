@@ -1,5 +1,4 @@
 const testCli = require('./../test-cli');
-const authenticator = require('../../../src/services/authenticator');
 const {
   getEnvironmentNock,
   getEnvironmentNotFoundNock,
@@ -8,19 +7,11 @@ const { testEnv } = require('../../fixtures/envs');
 const GetCommand = require('../../../src/commands/environments/get');
 
 describe('environments:get', () => {
-  beforeEach(() => {
-    // getAuthToken = authenticator.getAuthToken;
-    authenticator.getAuthToken = () => 'token';
-  });
-
-  // function cleanTest() {
-  //   authenticator.getAuthToken = getAuthToken;
-  // }
-
   describe('on an existing environment', () => {
     describe('without JSON format option', () => {
       it('should display the configuration of the Staging environment', () => testCli({
         env: testEnv,
+        token: 'any',
         nock: [
           getEnvironmentNock(),
         ],
@@ -40,6 +31,7 @@ describe('environments:get', () => {
     describe('with JSON format option', () => {
       it('should display the configuration of the Staging environment', () => testCli({
         env: testEnv,
+        token: 'any',
         nock: [
           getEnvironmentNock(),
         ],
@@ -65,6 +57,7 @@ describe('environments:get', () => {
   describe('on an unknown environment', () => {
     it('should display a NotFound error', () => testCli({
       env: testEnv,
+      token: 'any',
       nock: [
         getEnvironmentNotFoundNock(),
       ],
