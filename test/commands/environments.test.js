@@ -3,14 +3,14 @@ const EnvironmentCommand = require('../../src/commands/environments');
 const {
   enter,
   arrowDown,
-} = require('../fixtures/dialogs');
-const { testEnv } = require('../fixtures/envs');
+} = require('../fixtures/std');
+const { testEnv } = require('../fixtures/env');
 const {
   notAGoogleAccount,
   aLogInValid,
   aProjectListValid,
   anEnvironmentListValid,
-} = require('../fixtures/nocks');
+} = require('../fixtures/api');
 
 describe('environments', () => {
   it('should display environment list', testCli({

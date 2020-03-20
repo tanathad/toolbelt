@@ -4,14 +4,14 @@ const testCli = require('./test-cli');
 const LoginCommand = require('../../src/commands/login');
 const {
   emailAndPassword,
-} = require('../fixtures/dialogs');
+} = require('../fixtures/std');
 
 const {
   aGoogleAccount,
   aLogInValid,
   aLoginInvalid,
-} = require('../fixtures/nocks');
-const { testEnv } = require('../fixtures/envs');
+} = require('../fixtures/api');
+const { testEnv } = require('../fixtures/env');
 
 describe('login', () => {
   describe('with email in args', () => {

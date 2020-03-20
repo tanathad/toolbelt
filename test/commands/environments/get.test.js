@@ -2,8 +2,8 @@ const testCli = require('./../test-cli');
 const {
   anEnvironmentValid,
   anEnvironmentNotFound,
-} = require('../../fixtures/nocks');
-const { testEnv } = require('../../fixtures/envs');
+} = require('../../fixtures/api');
+const { testEnv } = require('../../fixtures/env');
 const GetCommand = require('../../../src/commands/environments/get');
 
 describe('environments:get', () => {
