@@ -6,15 +6,15 @@ const authenticator = require('../../../src/services/authenticator');
 
 describe('environments:update', () => {
   let getAuthToken;
-  before(() => {
+  beforeEach(() => {
     getAuthToken = authenticator.getAuthToken;
     authenticator.getAuthToken = () => 'token';
   });
-  after(() => {
+  afterEach(() => {
     authenticator.getAuthToken = getAuthToken;
   });
 
-  describe('with a valid token, environment id and name', () =>
+  describe('with a valid token, environment id and name', () => {
     fancy
       .stdout({ print: true })
       .env({ FOREST_URL: 'http://localhost:3001' })
@@ -24,9 +24,10 @@ describe('environments:update', () => {
       .command(['environments:update', '-e', '182', '-n', 'NewName'])
       .it('should stdout "Environment updated"', (ctx) => {
         expect(ctx.stdout).to.contain('Environment updated');
-      }));
+      });
+  });
 
-  describe('with a valid token, environment id and apiEnpoint', () =>
+  describe('with a valid token, environment id and apiEnpoint', () => {
     fancy
       .stdout({ print: true })
       .env({ FOREST_URL: 'http://localhost:3001' })
@@ -36,13 +37,15 @@ describe('environments:update', () => {
       .command(['environments:update', '-e', '182', '-u', 'https://super.url.com'])
       .it('should stdout "Environment updated"', (ctx) => {
         expect(ctx.stdout).to.contain('Environment updated');
-      }));
+      })
+  });
 
-  describe('without name and apiEndpoint', () =>
+  describe('without name and apiEndpoint', () => {
     fancy
       .stderr({ print: true })
       .command(['environments:update', '-e', '182'])
       .it('should stderr "Please provide environment name and/or url"', (ctx) => {
         expect(ctx.stderr).to.contain('Please provide environment name and/or url');
-      }));
+      });
+  });
 });

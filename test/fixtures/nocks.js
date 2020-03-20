@@ -37,4 +37,23 @@ module.exports = {
         id: 4, name: 'name2', apiEndpoint: 'http://localhost:2', type: 'type2',
       },
     ])),
+
+  getEnvironmentNock: () => nock('http://localhost:3001')
+    .matchHeader('forest-environment-id', '324')
+    .get('/api/environments/324')
+    .reply(200, EnvironmentSerializer.serialize({
+      id: '324',
+      name: 'Staging',
+      apiEndpoint: 'https://forestadmin-server-staging.herokuapp.com',
+      isActive: true,
+      type: 'development',
+      lianaName: 'forest-express-sequelize',
+      lianaVersion: '1.3.2',
+      secretKey: '2c38a1c6bb28e7bea1c943fac1c1c95db5dc1b7bc73bd649a0b113713ee29125',
+    })),
+
+  getEnvironmentNotFoundNock: () => nock('http://localhost:3001')
+    .matchHeader('forest-environment-id', '3947')
+    .get('/api/environments/3947')
+    .reply(404),
 };

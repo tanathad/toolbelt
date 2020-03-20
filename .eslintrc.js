@@ -25,5 +25,6 @@ module.exports = {
     'jest/no-standalone-expect': 0,
     'no-console': 0,
     'no-param-reassign': 0,
+    'jest/expect-expect': 0,
   },
 };

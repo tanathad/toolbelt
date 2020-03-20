@@ -1,15 +1,31 @@
 const mockStdin = require('mock-stdin');
 const { stdout, stderr } = require('stdout-stderr');
-const { expect } = require('chai');
+const logger = require('./../../src/services/logger');
 
 const asArray = (any) => {
   if (!any) return [];
   return Array.isArray(any) ? any : [any];
 };
 
+const errorIfRestNotEmpty = (rest) => {
+  if (Object.keys(rest).length > 0) {
+    throw new Error(`Unknown testCli parameter(s): ${Object.keys(rest).join(', ')}`);
+  }
+};
+
+const errorIfDialogRestNotEmpty = (dialog) => {
+  const valids = ['in', 'out', 'err'];
+  const rest = dialog.filter((type) => !valids.find(valid => type.hasOwnProperty(valid)));
+  if (rest.length > 0) {
+    throw new Error(`Unknown testCli dialog attribute(s). Valids are: ${valids.join(', ')}`);
+  }
+};
+
 module.exports = async function testCli({
-  nock, env, command, dialog, print = false,
-}) {
+                                          nock, env, command, dialog, print = false, ...rest
+                                        }) {
+  errorIfRestNotEmpty(rest);
+  errorIfDialogRestNotEmpty(dialog);
   stdout.print = print;
   stderr.print = print;
   const nocks = asArray(nock);
@@ -35,11 +51,19 @@ module.exports = async function testCli({
   if (errorOutputs.length) stderr.stop();
 
   for (let i = 0; i < outputs.length; i += 1) {
-    expect(stdout.output).to.contain(outputs[i]);
+    const isString = typeof outputs[i] === 'string' || outputs[i] instanceof String;
+    if (isString) {
+      expect(stdout.output).toContain(outputs[i]);
+    } else {
+      const isJson = outputs[i].constructor === ({}).constructor;
+      if (isJson) {
+        expect(JSON.parse(stdout.output)).toEqual(outputs[i]);
+      }
+    }
   }
 
   for (let i = 0; i < errorOutputs.length; i += 1) {
-    expect(stderr.output).to.contain(errorOutputs[i]);
+    expect(stderr.output).toContain(errorOutputs[i]);
   }
 
   process.env = previousEnv;
