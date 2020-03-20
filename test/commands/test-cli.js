@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const mockStdin = require('mock-stdin');
 const { stdout, stderr } = require('stdout-stderr');
 const authenticator = require('./../../src/services/authenticator');
@@ -15,6 +16,13 @@ const errorIfDialogRestNotEmpty = (dialog) => {
       Object.prototype.hasOwnProperty.call(type, valid)));
   if (rest.length > 0) {
     throw new Error(`Unknown testCli dialog attribute(s). Valids are: ${valids.join(', ')}`);
+  }
+};
+
+const errorIfBadCommand = (command) => {
+  if (!command || !_.isFunction(command)) {
+    throw new Error('"command" testCli property must be a function ex. () =>'
+      + ' GetCommand.run([\'324\'])');
   }
 };
 
@@ -118,6 +126,7 @@ module.exports = ({
 }) => {
   errorIfRestNotEmpty(rest);
   errorIfDialogRestNotEmpty(dialog);
+  errorIfBadCommand(command);
   const {
     nocks, inputs, outputs, errorOutputs,
   } = prepare(nock, dialog);
