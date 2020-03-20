@@ -1,4 +1,4 @@
-const testDialog = require('./test-cli');
+const testCli = require('./test-cli');
 const EnvironmentCommand = require('../../src/commands/environments');
 const {
   enter,
@@ -13,7 +13,7 @@ const {
 } = require('../fixtures/nocks');
 
 describe('environments', () => {
-  it('should display environment list', () => testDialog({
+  it('should display environment list', testCli({
     env: testEnv,
     command: () => EnvironmentCommand.run([]),
     nock: [

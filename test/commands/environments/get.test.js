@@ -9,7 +9,7 @@ const GetCommand = require('../../../src/commands/environments/get');
 describe('environments:get', () => {
   describe('on an existing environment', () => {
     describe('without JSON format option', () => {
-      it('should display the configuration of the Staging environment', () => testCli({
+      it('should display the configuration of the Staging environment', testCli({
         env: testEnv,
         token: 'any',
         nock: [
@@ -29,7 +29,7 @@ describe('environments:get', () => {
       }));
     });
     describe('with JSON format option', () => {
-      it('should display the configuration of the Staging environment', () => testCli({
+      it('should display the configuration of the Staging environment', testCli({
         env: testEnv,
         token: 'any',
         nock: [
@@ -55,7 +55,7 @@ describe('environments:get', () => {
   });
 
   describe('on an unknown environment', () => {
-    it('should display a NotFound error', () => testCli({
+    it('should display a NotFound error', testCli({
       env: testEnv,
       token: 'any',
       nock: [

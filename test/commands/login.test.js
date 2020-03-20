@@ -16,7 +16,7 @@ const { testEnv } = require('../fixtures/envs');
 describe('login', () => {
   describe('with email in args', () => {
     describe('with bad token in args', () => {
-      it('should display invalid token', () => testCli({
+      it('should display invalid token', testCli({
         command: () => LoginCommand.run(['-e', 'smile@gmail.com', '-t', 'invalid_token']),
         dialog: [
           { err: 'Invalid token. Please enter your authentication token.' },
@@ -25,7 +25,7 @@ describe('login', () => {
     });
     describe('with valid token in args', () => {
       const token = jwt.sign({}, 'key', { expiresIn: '1day' });
-      it('should login successful', () => testCli({
+      it('should login successful', testCli({
         command: () => LoginCommand.run(['-e', 'smile@gmail.com', '-t', token]),
         dialog: [
           { in: `${jwt.sign({}, 'key', { expiresIn: '1day' })}` },
@@ -35,7 +35,7 @@ describe('login', () => {
     });
     describe('with a google mail', () => {
       describe('with a valid token from input', () => {
-        it('should login successful', () => testCli({
+        it('should login successful', testCli({
           env: testEnv,
           command: () => LoginCommand.run(['-e', 'robert@gmail.com']),
           nock: aGoogleAccountNock(),
@@ -55,7 +55,7 @@ describe('login', () => {
   describe('with typing email', () => {
     describe('with a google mail', () => {
       describe('with a valid token from input', () => {
-        it('should login successful', () => testCli({
+        it('should login successful', testCli({
           env: testEnv,
           command: () => LoginCommand.run([]),
           nock: aGoogleAccountNock(),
@@ -73,7 +73,7 @@ describe('login', () => {
       });
     });
     describe('with typing valid password', () => {
-      it('should login successful', () => testCli({
+      it('should login successful', testCli({
         env: testEnv,
         command: () => LoginCommand.run([]),
         nock: validAuthNock(),
@@ -84,7 +84,7 @@ describe('login', () => {
       }));
     });
     describe('with typing wrong password', () => {
-      it('should display incorrect password', () => testCli({
+      it('should display incorrect password', testCli({
         env: testEnv,
         command: () => LoginCommand.run([]),
         nock: invalidAuthNock(),
