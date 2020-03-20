@@ -15,14 +15,22 @@ const errorIfDialogRestNotEmpty = (dialog) => {
     !valids.find((valid) =>
       Object.prototype.hasOwnProperty.call(type, valid)));
   if (rest.length > 0) {
-    throw new Error(`Unknown testCli dialog attribute(s). Valids are: ${valids.join(', ')}`);
+    throw new Error(`testCli configuration error: Invalid "dialog" attribute(s). 
+      Valids are: ${valids.join(', ')}`);
   }
 };
 
 const errorIfBadCommand = (command) => {
   if (!command || !_.isFunction(command)) {
-    throw new Error('"command" testCli property must be a function ex. () =>'
-      + ' GetCommand.run([\'324\'])');
+    throw new Error('testCli configuration error: "command" must be a function ex.'
+      + ' () => GetCommand.run([\'324\'])');
+  }
+};
+
+const errorIfNoDialog = (dialog) => {
+  if (!dialog || !Array.isArray(dialog) || !dialog.length > 0) {
+    throw new Error('testCli configuration error: "dialog" must be an array ex.'
+      + ' [{in:\'john\'},{out:\'hello, john\'}]');
   }
 };
 
@@ -125,8 +133,9 @@ module.exports = ({
   nock, env, command, dialog, print = false, token: tokenBehavior = null, ...rest
 }) => {
   errorIfRestNotEmpty(rest);
-  errorIfDialogRestNotEmpty(dialog);
   errorIfBadCommand(command);
+  errorIfNoDialog(dialog);
+  errorIfDialogRestNotEmpty(dialog);
   const {
     nocks, inputs, outputs, errorOutputs,
   } = prepare(nock, dialog);
