@@ -7,20 +7,20 @@ const {
 const { testEnv } = require('../fixtures/env');
 const {
   notAGoogleAccount,
-  aLogInValid,
-  aProjectListValid,
-  anEnvironmentListValid,
+  loginValid,
+  getProjectListValid,
+  getEnvironmentListValid,
 } = require('../fixtures/api');
 
 describe('environments', () => {
-  it('should display environment list', testCli({
+  it('should display environment list', () => testCli({
     env: testEnv,
     command: () => EnvironmentCommand.run([]),
     api: [
       notAGoogleAccount(),
-      aLogInValid(),
-      aProjectListValid(),
-      anEnvironmentListValid(),
+      loginValid(),
+      getProjectListValid(),
+      getEnvironmentListValid(),
     ],
     std: [
       { out: 'Login required.' },

@@ -1,7 +1,7 @@
 const testCli = require('./../test-cli');
 const {
-  anEnvironmentValid,
-  anEnvironmentNotFound,
+  getEnvironmentValid,
+  getEnvironmentNotFound,
 } = require('../../fixtures/api');
 const { testEnv } = require('../../fixtures/env');
 const GetCommand = require('../../../src/commands/environments/get');
@@ -9,12 +9,12 @@ const GetCommand = require('../../../src/commands/environments/get');
 describe('environments:get', () => {
   describe('on an existing environment', () => {
     describe('without JSON format option', () => {
-      it('should display the configuration of the Staging environment', testCli({
+      it('should display the configuration of the Staging environment', () => testCli({
         env: testEnv,
         token: 'any',
         command: () => GetCommand.run(['324']),
         api: [
-          anEnvironmentValid(),
+          getEnvironmentValid(),
         ],
         std: [
           { out: 'id                 324' },
@@ -29,12 +29,12 @@ describe('environments:get', () => {
       }));
     });
     describe('with JSON format option', () => {
-      it('should display the configuration of the Staging environment', testCli({
+      it('should display the configuration of the Staging environment', () => testCli({
         env: testEnv,
         token: 'any',
         command: () => GetCommand.run(['324', '--format', 'json']),
         api: [
-          anEnvironmentValid(),
+          getEnvironmentValid(),
         ],
         std: [
           {
@@ -55,15 +55,15 @@ describe('environments:get', () => {
   });
 
   describe('on an unknown environment', () => {
-    it('should display a NotFound error', testCli({
+    it('should display a NotFound error', () => testCli({
       env: testEnv,
       token: 'any',
       command: () => GetCommand.run(['3947']),
       api: [
-        anEnvironmentNotFound(),
+        getEnvironmentNotFound(),
       ],
       std: [
-        { err: 'Cannot find the environment 3947.\n' },
+        { err: 'Cannot find the environment 3947.' },
       ],
     }));
   });

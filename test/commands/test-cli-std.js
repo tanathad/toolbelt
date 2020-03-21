@@ -2,13 +2,11 @@ const mockStdin = require('mock-stdin');
 const { stdout, stderr } = require('stdout-stderr');
 
 module.exports = {
-  definePrint: (print) => {
+  mockStd: (outputs, errorOutputs, print) => {
     stdout.previousPrint = stdout.print;
     stderr.previousPrint = stderr.print;
     stdout.print = print;
     stderr.print = print;
-  },
-  mockStd: (outputs, errorOutputs) => {
     const stdin = mockStdin.stdin();
     if (outputs.length) stdout.start();
     if (errorOutputs.length) stderr.start();
@@ -40,8 +38,7 @@ module.exports = {
     if (inputs.length) stdin.reset();
     if (outputs.length) stdout.stop();
     if (errorOutputs.length) stderr.stop();
-  },
-  rollbackPrint: () => {
+
     stdout.print = stdout.previousPrint;
     stderr.print = stderr.previousPrint;
     stdout.previousPrint = null;

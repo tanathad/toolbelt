@@ -2,6 +2,7 @@ const nock = require('nock');
 const jwt = require('jsonwebtoken');
 const ProjectSerializer = require('../../src/serializers/project');
 const EnvironmentSerializer = require('../../src/serializers/environment');
+const JobSerializer = require('../../src/serializers/job');
 
 module.exports = {
   aGoogleAccount: () => nock('http://localhost:3001')
@@ -12,22 +13,22 @@ module.exports = {
     .get('/api/users/google/some@mail.com')
     .reply(200, { data: { isGoogleAccount: false } }),
 
-  aLogInValid: () => nock('http://localhost:3001')
+  loginValid: () => nock('http://localhost:3001')
     .post('/api/sessions', { email: 'some@mail.com', password: 'valid_pwd' })
     .reply(200, { token: jwt.sign({}, 'key', { expiresIn: '1day' }) }),
 
-  aLoginInvalid: () => nock('http://localhost:3001')
+  loginInvalid: () => nock('http://localhost:3001')
     .post('/api/sessions', { email: 'some@mail.com', password: 'pwd' })
     .reply(401),
 
-  aProjectListValid: () => nock('http://localhost:3001')
+  getProjectListValid: () => nock('http://localhost:3001')
     .get('/api/projects')
     .reply(200, ProjectSerializer.serialize([
       { id: 1, name: 'project1' },
       { id: 2, name: 'project2' },
     ])),
 
-  anEnvironmentListValid: () => nock('http://localhost:3001')
+  getEnvironmentListValid: () => nock('http://localhost:3001')
     .get('/api/projects/2/environments')
     .reply(200, EnvironmentSerializer.serialize([
       {
@@ -38,7 +39,7 @@ module.exports = {
       },
     ])),
 
-  anEnvironmentValid: () => nock('http://localhost:3001')
+  getEnvironmentValid: () => nock('http://localhost:3001')
     .matchHeader('forest-environment-id', '324')
     .get('/api/environments/324')
     .reply(200, EnvironmentSerializer.serialize({
@@ -52,8 +53,31 @@ module.exports = {
       secretKey: '2c38a1c6bb28e7bea1c943fac1c1c95db5dc1b7bc73bd649a0b113713ee29125',
     })),
 
-  anEnvironmentNotFound: () => nock('http://localhost:3001')
+  getEnvironmentNotFound: () => nock('http://localhost:3001')
     .matchHeader('forest-environment-id', '3947')
     .get('/api/environments/3947')
     .reply(404),
+
+  deleteEnvironment: () => nock('http://localhost:3001')
+    .matchHeader('forest-environment-id', '324')
+    .delete('/api/environments/324')
+    .reply(200, {
+      meta: {
+        job_id: 78,
+      },
+    }),
+
+  getJob: () => nock('http://localhost:3001')
+    .get('/api/jobs/78')
+    .reply(200, JobSerializer.serialize({
+      state: 'complete',
+      progress: '100',
+    })),
+
+  getJobFailed: () => nock('http://localhost:3001')
+    .get('/api/jobs/78')
+    .reply(200, JobSerializer.serialize({
+      state: 'failed',
+      progress: '10',
+    })),
 };
