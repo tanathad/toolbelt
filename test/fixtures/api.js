@@ -58,6 +58,24 @@ module.exports = {
     .get('/api/environments/3947')
     .reply(404),
 
+  updateEnvironmentName: () => nock('http://localhost:3001')
+    .put('/api/environments/182', {
+      data: {
+        type: 'environments',
+        attributes: { name: 'NewName' },
+      },
+    })
+    .reply(200),
+
+  updateEnvironmentEndpoint: () => nock('http://localhost:3001')
+    .put('/api/environments/182', {
+      data: {
+        type: 'environments',
+        attributes: { 'api-endpoint': 'https://super.url.com' },
+      },
+    })
+    .reply(200),
+
   deleteEnvironment: () => nock('http://localhost:3001')
     .matchHeader('forest-environment-id', '324')
     .delete('/api/environments/324')
